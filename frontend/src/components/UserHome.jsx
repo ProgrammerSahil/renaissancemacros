@@ -41,7 +41,7 @@ const UserHome = ({ userData, mealData }) => {
       case "basicInfo":
         return <BasicInfo userData={userData} meals={mealData} />;
       case "meals":
-        return <MealsPage />;
+        return <MealsPage userData={userData} />;
       default:
         return <div>Welcome!</div>;
     }

@@ -2,8 +2,7 @@ import jwt from "jsonwebtoken";
 import userModel from "../models/userModel.js";
 
 const verifyToken = async (req, res, next) => {
-    console.log("verifyToken middleware called");
-    console.log("Headers:", req.headers);
+  console.log("verifyToken middleware called");
 
   try {
     const token = req.header("Authorization")?.replace("Bearer ", "");
@@ -16,7 +15,6 @@ const verifyToken = async (req, res, next) => {
     console.log("Decoded token:", decoded);
 
     const user = await userModel.findById(decoded.userId).select("-password");
-    console.log("User found:", user);
 
     if (!user) {
       return res.status(404).json({ message: "User not found" });

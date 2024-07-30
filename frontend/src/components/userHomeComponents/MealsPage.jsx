@@ -1,14 +1,20 @@
 import React, { useState } from "react";
 import axios from "axios";
 
-const MealsPage = () => {
+const MealsPage = ({ userData }) => {
   const [search, setSearch] = useState("");
+  const [mealName, setMealName] = useState("");
   const [mealData, setMealData] = useState(null);
   const [mealImage, setMealImage] = useState(null);
-  const [mealName, setMealName] = useState(null);
+  const [quantity, setQuantity] = useState(100); // Default quantity in grams
+  const [components, setComponents] = useState([]); // List of food components
 
   const handleSearchChange = (e) => {
     setSearch(e.target.value);
+  };
+
+  const handleMealNameChange = (e) => {
+    setMealName(e.target.value);
   };
 
   const fetchMealData = async (query) => {
@@ -23,66 +29,213 @@ const MealsPage = () => {
         `https://api.unsplash.com/search/photos/?client_id=aH_NfScFgR3t0nRZBQMEkAKituOklmoPbw6JwW2MXV0&query=${query}`
       );
       setMealData(response.data);
-      let firstImage = imageResponse.data.results[0];
-      setMealImage(firstImage.urls.small);
+      const firstImage = imageResponse.data.results[0];
+      setMealImage(firstImage ? firstImage.urls.small : null);
+      setMealName(query); // Set initial meal name to the search query
     } catch (error) {
       console.error("Error fetching meal data:", error);
+      alert("Failed to fetch meal data. Please try again.");
     }
   };
 
   const handleSearchSubmit = (e) => {
     e.preventDefault();
     fetchMealData(search);
-    setMealName(mealData.name);
+  };
+
+  const handleAddMeal = () => {
+    if (!mealData) {
+      alert("Please search and select a food item.");
+      return;
+    }
+
+    // Calculate the macros based on the quantity
+    const totalCarbs = (mealData.carbs.value / 100) * quantity;
+    const totalCalories = (mealData.calories.value / 100) * quantity;
+    const totalFats = (mealData.fat.value / 100) * quantity;
+    const totalProteins = (mealData.protein.value / 100) * quantity;
+
+    // Add the new component to the list
+    const newComponent = {
+      name: search,
+      quantity: quantity,
+      carbs: totalCarbs,
+      calories: totalCalories,
+      fats: totalFats,
+      proteins: totalProteins,
+    };
+    setComponents([...components, newComponent]);
+
+    // Reset the search field
+    setSearch("");
+    setMealData(null);
+    setMealImage(null);
+    setQuantity(100); // Reset quantity to default 100g
+  };
+
+  const handleSaveMeal = async () => {
+    if (!mealName.trim()) {
+      alert("Please enter a meal name.");
+      return;
+    }
+
+    const totalCarbs = components.reduce((sum, item) => sum + item.carbs, 0);
+    const totalCalories = components.reduce(
+      (sum, item) => sum + item.calories,
+      0
+    );
+
+    const totalQuantity = components.reduce(
+      (sum, item) => sum + item.quantity,
+      0
+    );
+    const totalFats = components.reduce((sum, item) => sum + item.fats, 0);
+    const totalProteins = components.reduce(
+      (sum, item) => sum + item.proteins,
+      0
+    );
+
+    const token = localStorage.getItem("token"); // Adjust based on where you store the token
+
+    try {
+      const response = await axios.post(
+        "http://localhost:4000/api/meal/addMeal",
+        {
+          email: userData.email,
+          meals: [
+            {
+              name: mealName,
+              totalCarbs,
+              totalCalories,
+              totalFats,
+              quantity: totalQuantity,
+              totalProteins,
+              components,
+            },
+          ],
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      alert("Meal added successfully!");
+
+      // Reset form
+      setMealName("");
+      setComponents([]);
+    } catch (error) {
+      console.error("Error adding meal:", error);
+      alert("Failed to add meal. Please try again.");
+    }
   };
 
   return (
-    <>
-      <form className="relative" onSubmit={handleSearchSubmit}>
-        <input
-          placeholder="Search Food..."
-          className="input shadow-lg focus:border-2 border-gray-300 px-5 py-3 rounded-xl w-56 transition-all focus:w-64 outline-none"
-          name="search"
-          type="search"
-          value={search}
-          onChange={handleSearchChange}
-        />
-        <svg
-          className="size-6 absolute top-3 right-3 text-gray-500"
-          stroke="currentColor"
-          strokeWidth="1.5"
-          viewBox="0 0 24 24"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"
-            strokeLinejoin="round"
-            strokeLinecap="round"
-          ></path>
-        </svg>
-      </form>
+    <div className="container mx-auto p-4">
+      <h2 className="text-4xl font-bold mb-8 text-center">Create Meal</h2>
 
-      {mealData && (
-        <div className="card card-compact bg-base-100 shadow-xl mt-20 p-8">
-          <figure>
-            <img
-              src={mealImage || "https://via.placeholder.com/150"}
-              alt={mealName}
+      <div className="w-full max-w-md mx-auto bg-white shadow-md rounded-lg overflow-hidden">
+        <div className="p-4">
+          <input
+            type="text"
+            name="mealName"
+            placeholder="Enter Meal Name..."
+            value={mealName}
+            onChange={handleMealNameChange}
+          />
+          <form className="relative mb-4" onSubmit={handleSearchSubmit}>
+            <input
+              placeholder="Search Food..."
+              className="w-full pr-10 p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+              name="search"
+              type="search"
+              value={search}
+              onChange={handleSearchChange}
             />
-          </figure>
-          <div className="card-body">
-            <h2 className="card-title">{search}</h2>
-            <p>
-              Calories: {mealData.calories.value} {mealData.calories.unit}
-            </p>
-            <p>Carbs: {mealData.carbs.value} g</p>
-            <p>Fats: {mealData.fat.value} g</p>
-            <p>Proteins: {mealData.protein.value} g</p>
-          </div>
+            <button
+              type="submit"
+              className="absolute right-2 top-2 text-gray-600 hover:text-gray-800"
+            >
+              <svg
+                className="w-6 h-6"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                />
+              </svg>
+            </button>
+          </form>
         </div>
-      )}
-    </>
+
+        {mealData && (
+          <div className="p-4 space-y-4">
+            <img
+              src={mealImage || "/api/placeholder/150/150"}
+              alt={search}
+              className="w-full h-48 object-cover rounded-lg"
+            />
+            <h3 className="text-xl font-semibold">{search}</h3>
+            <div className="grid grid-cols-2 gap-2 text-sm">
+              <p>
+                Calories: {mealData.calories.value} {mealData.calories.unit}
+              </p>
+              <p>Carbs: {mealData.carbs.value} g</p>
+              <p>Fats: {mealData.fat.value} g</p>
+              <p>Proteins: {mealData.protein.value} g</p>
+            </div>
+            <div className="flex items-center space-x-2">
+              <label htmlFor="quantity" className="text-sm font-medium">
+                Quantity (in grams):
+              </label>
+              <input
+                id="quantity"
+                type="number"
+                min="1"
+                value={quantity}
+                onChange={(e) => setQuantity(parseInt(e.target.value, 10))}
+                className="w-20 p-1 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+            <button
+              onClick={handleAddMeal}
+              className="w-full bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+            >
+              Add to Meal
+            </button>
+          </div>
+        )}
+
+        {components.length > 0 && (
+          <div className="p-4 space-y-4">
+            <h3 className="text-xl font-semibold">Meal Components</h3>
+            <ul>
+              {components.map((component, index) => (
+                <li key={index}>
+                  {component.name} - {component.quantity}g: {component.calories}{" "}
+                  cal, {component.carbs}g carbs, {component.fats}g fats,{" "}
+                  {component.proteins}g proteins
+                </li>
+              ))}
+            </ul>
+            <button
+              onClick={handleSaveMeal}
+              className="w-full bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50"
+            >
+              Save Meal
+            </button>
+          </div>
+        )}
+      </div>
+    </div>
   );
 };
 

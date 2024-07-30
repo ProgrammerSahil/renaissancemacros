@@ -28,16 +28,49 @@ const getMacros = async (req, res) => {
 
 const addMeal = async (req, res) => {
   try {
+    const { email } = req.body;
     const {
-      email,
       name,
       totalCarbs,
       totalCalories,
       totalFats,
       totalProteins,
       components,
-    } = req.body;
+      quantity,
+    } = req.body.meals[0];
+    // Validate input data
+    if (
+      !email ||
+      !name ||
+      !totalCarbs ||
+      !totalCalories ||
+      !totalFats ||
+      !totalProteins ||
+      !quantity ||
+      !Array.isArray(components)
+    ) {
+      return res.status(400).json({
+        message: "All fields are required and components should be an array.",
+      });
+    }
 
+    // Validate components
+    for (const component of components) {
+      if (
+        !component.name ||
+        !component.carbs ||
+        !component.calories ||
+        !component.fats ||
+        !component.proteins ||
+        !component.quantity
+      ) {
+        return res
+          .status(400)
+          .json({ message: "All component fields are required." });
+      }
+    }
+
+    console.log("Adding meal for the user " + email);
     const user = await userModel.findOne({ email });
     if (!user) {
       return res.status(404).json({ message: "User not found" });
@@ -49,6 +82,7 @@ const addMeal = async (req, res) => {
       // If no meal document exists, create a new one
       mealDoc = new mealModel({
         userId: user._id,
+        email: email,
         meals: [],
       });
     }
@@ -61,11 +95,13 @@ const addMeal = async (req, res) => {
       totalFats,
       totalProteins,
       components,
+      quantity,
       date: new Date(),
     };
 
     // Add the new meal to the meals array
     mealDoc.meals.push(newMeal);
+    console.log(mealDoc);
 
     // Save the updated meal document
     await mealDoc.save();
@@ -82,17 +118,22 @@ const addMeal = async (req, res) => {
   }
 };
 
+export default addMeal;
+
 const getMeals = async (req, res) => {
   try {
     // Extract email from request
-    const email = req.email;
+    const { email } = req.query;
+    console.log("extracting email from request", email);
 
     // Find the meal document associated with the email
     const mealDoc = await mealModel.findOne({ email: email });
 
     // If no meal document is found, return a 404 error
     if (!mealDoc) {
-      return res.status(404).json({ message: "User meals not found" });
+      return res
+        .status(200)
+        .json({ message: "User meals not found", meals: [] });
     }
 
     // Return the meals with a 200 status

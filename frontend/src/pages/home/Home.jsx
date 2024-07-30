@@ -13,10 +13,6 @@ const Home = () => {
   useEffect(() => {
     const fetchUserData = async () => {
       const token = localStorage.getItem("token");
-      console.log(
-        "Token from localStorage:",
-        token ? "Token exists" : "No token"
-      );
 
       if (token) {
         try {
@@ -30,16 +26,20 @@ const Home = () => {
           setUserData(response.data.userData);
           setIsLoggedIn(true);
 
+          let email = response.data.userData.email;
+
           console.log("Fetching user meals...");
           const mealResponse = await axios.get(
             "http://localhost:4000/api/meal/getMeals",
             {
               headers: { Authorization: `Bearer ${token}` },
+              params: { email },
             }
           );
 
-          // Assuming you have a state to store meals
-          setMeals(mealResponse.data.meals);
+          if (mealResponse) {
+            setMeals(mealResponse.data.meals);
+          }
         } catch (error) {
           console.error("Error fetching user data:", error.response || error);
           if (error.response && error.response.status === 401) {
