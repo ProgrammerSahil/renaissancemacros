@@ -2,15 +2,67 @@ import React from "react";
 import YourMeals from "../YourMeals";
 
 const BasicInfo = ({ userData, meals }) => {
+  function formatDate(dateString) {
+    const date = new Date(dateString);
+    const options = {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    };
+    return date.toLocaleString("en-US", options);
+  }
+
+  const showWeightHistory = (weightHistory) => (
+    <div>
+      {weightHistory.map((weight) => (
+        <p>
+          Weighed {weight.weight} Kg on {formatDate(weight.date)}
+        </p>
+      ))}
+    </div>
+  );
+  const renderAdditionalInfoModal = (userData) => {
+    return (
+      <>
+        <div className="text-6xl mb-6">{userData.firstName}</div>
+        <div className="bg-base-300 p-4 mb-4">
+          <h2 className="text-4xl mb-4">Caloric Data</h2>
+          <p className="mb-1">
+            Total daily energy expenditure(TDEE): {userData.tdee} kcal
+          </p>
+          <p className="mb-1">Base Metabolic Rate(BMR): {userData.bmr} kcal</p>
+          <p className="mb-1">
+            Daily calorie target for your weight goals:{" "}
+            {userData.dailyCalorieTarget} kcal
+          </p>
+        </div>
+        <div className="bg-base-300 p-4 ">
+          <h2 className="text-4xl mb-4">Weight History</h2>
+          <p className="mb-1 text-xl">
+            Current Weight: {userData.currentWeight} kg
+          </p>
+          <p>History: </p>
+          <div>{showWeightHistory(userData.weightHistory)}</div>
+        </div>
+      </>
+    );
+  };
+
   const weightLastUpdateString = userData.weightHistory.at(-1).date;
   const date = new Date(weightLastUpdateString);
   const formattedDate = `${date.getDate()}/${
     date.getMonth() + 1
   }/${date.getFullYear()}`;
-
   return (
     <>
-      <div className="stats shadow bg-base-200">
+      <div
+        className="stats shadow bg-base-200 cursor-pointer"
+        onClick={() => {
+          document.getElementById("my_modal_0").showModal();
+        }}
+      >
         <div className="stat">
           <div className="stat-figure text-secondary">
             <svg
@@ -53,12 +105,22 @@ const BasicInfo = ({ userData, meals }) => {
           </div>
           <div className="stat-title">Macros Goals</div>
           <div className="stat-desc">
-            Protein: {userData.macroTargets.protein}g
+            <u>Protein: {userData.macroTargets.protein}g</u>
           </div>
           <div className="stat-desc">Fats: {userData.macroTargets.fats}g</div>
           <div className="stat-desc">Carbs: {userData.macroTargets.carbs}g</div>
         </div>
       </div>
+      <dialog id="my_modal_0" className="modal">
+        <div className="modal-box">
+          {renderAdditionalInfoModal(userData)}
+          <div className="modal-action">
+            <form method="dialog">
+              <button className="btn">Close</button>
+            </form>
+          </div>
+        </div>
+      </dialog>
       <YourMeals meals={meals} />
     </>
   );

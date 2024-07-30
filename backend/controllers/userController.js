@@ -165,6 +165,9 @@ const findUserProfile = async (req, res) => {
         dailyCalorieTarget: user.dailyCalorieTarget,
         weightGoal: user.weightGoal,
         macroTargets: user.macroTargets,
+        tdee: user.tdee,
+        dietaryRestrictions: user.dietaryRestrictions,
+        foodAllergies: user.foodAllergies,
       },
     });
   } catch (error) {
