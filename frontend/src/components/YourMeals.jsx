@@ -23,15 +23,17 @@ const YourMeals = ({ meals }) => {
           setActiveMeal(meal);
           document.getElementById("my_modal_1").showModal();
         }}
+        className="m-4 w-64"
       >
-        <div className="collapse bg-base-200">
-          <input type="radio" name="my-accordion-2" defaultChecked />
-          <div className="collapse-title text-xl font-medium">{meal.name}</div>
-          <div className="collapse-content">
-            <p>Calories: {meal.totalCalories} kcal</p>
-            <p>Protein: {meal.totalProteins} g</p>
-            <p>Carbs: {meal.totalCarbs} g</p>
-            <p>Fats: {meal.totalFats} g</p>
+        <div className="collapse bg-base-200 p-6 flex flex-col items-start content-start">
+          <div className=" text-4xl cursor-pointer mb-4 p-1">{meal.name}</div>
+          <div className="flex flex-col items-start">
+            <p className="px-0.5">Calories: {meal.totalCalories} kcal</p>
+            <p className="bg-lime-950 text-stone-400 px-0.5 rounded-sm">
+              Protein: {meal.totalProteins} g
+            </p>
+            <p className="px-0.5">Carbs: {meal.totalCarbs} g</p>
+            <p className="px-0.5">Fats: {meal.totalFats} g</p>
           </div>
         </div>
       </button>
@@ -55,7 +57,7 @@ const YourMeals = ({ meals }) => {
     <div>
       {meals.length > 0 ? (
         <>
-          <h2 className="p-5 text-4xl">Your Meals</h2>
+          <h2 className="p-5 text-4xl text-center">Your Meals</h2>
           {meals.map(renderMeal)}
         </>
       ) : (

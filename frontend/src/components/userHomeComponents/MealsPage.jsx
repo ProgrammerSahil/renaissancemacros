@@ -31,7 +31,7 @@ const MealsPage = ({ userData }) => {
       setMealData(response.data);
       const firstImage = imageResponse.data.results[0];
       setMealImage(firstImage ? firstImage.urls.small : null);
-      setMealName(query); // Set initial meal name to the search query
+      setMealName(""); // Set initial meal name to the search query
     } catch (error) {
       console.error("Error fetching meal data:", error);
       alert("Failed to fetch meal data. Please try again.");
@@ -136,7 +136,7 @@ const MealsPage = ({ userData }) => {
     <div className="container mx-auto p-4">
       <h2 className="text-4xl font-bold mb-8 text-center">Create Meal</h2>
 
-      <div className="w-full max-w-md mx-auto bg-white shadow-md rounded-lg overflow-hidden">
+      <div className="w-full max-w-md mx-auto bg-base-200 shadow-md rounded-lg overflow-hidden">
         <div className="p-4">
           <input
             type="text"
@@ -144,11 +144,12 @@ const MealsPage = ({ userData }) => {
             placeholder="Enter Meal Name..."
             value={mealName}
             onChange={handleMealNameChange}
+            className="w-full pr-10 p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 mb-4"
           />
           <form className="relative mb-4" onSubmit={handleSearchSubmit}>
             <input
-              placeholder="Search Food..."
-              className="w-full pr-10 p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Search food item to add..."
+              className="w-full pr-10 p-2  rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
               name="search"
               type="search"
               value={search}
@@ -185,6 +186,7 @@ const MealsPage = ({ userData }) => {
             />
             <h3 className="text-xl font-semibold">{search}</h3>
             <div className="grid grid-cols-2 gap-2 text-sm">
+              <p>Quantities shown for 100g</p> <br />
               <p>
                 Calories: {mealData.calories.value} {mealData.calories.unit}
               </p>
@@ -220,9 +222,12 @@ const MealsPage = ({ userData }) => {
             <ul>
               {components.map((component, index) => (
                 <li key={index}>
-                  {component.name} - {component.quantity}g: {component.calories}{" "}
-                  cal, {component.carbs}g carbs, {component.fats}g fats,{" "}
-                  {component.proteins}g proteins
+                  {component.name} - {component.quantity}g: <br />
+                  {component.calories.toFixed(2)} cal <br />
+                  {component.carbs.toFixed(2)}g carbs <br />
+                  {component.fats.toFixed(2)}g fats <br />
+                  {component.proteins.toFixed(2)}g proteins
+                  <hr />
                 </li>
               ))}
             </ul>
