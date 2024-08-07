@@ -27,7 +27,7 @@ const BasicInfo = ({ userData, meals }) => {
     return (
       <>
         <div className="text-6xl mb-6">{userData.firstName}</div>
-        <div className="bg-base-300 p-4 mb-4">
+        <div className="bg-base-300 p-4 mb-4 rounded-lg">
           <h2 className="text-4xl mb-4">Caloric Data</h2>
           <p className="mb-1">
             Total daily energy expenditure(TDEE): {userData.tdee} kcal
@@ -38,7 +38,7 @@ const BasicInfo = ({ userData, meals }) => {
             {userData.dailyCalorieTarget} kcal
           </p>
         </div>
-        <div className="bg-base-300 p-4 ">
+        <div className="bg-base-300 p-4 rounded-lg">
           <h2 className="text-4xl mb-4">Weight History</h2>
           <p className="mb-1 text-xl">
             Current Weight: {userData.currentWeight} kg

@@ -4,9 +4,11 @@ import axios from "axios";
 const Signup = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
 
   const handleSignIn = async (e) => {
     e.preventDefault();
+    setError("");
 
     try {
       const response = await axios.post(
@@ -16,14 +18,18 @@ const Signup = () => {
           password,
         }
       );
-
       localStorage.setItem("token", response.data.token);
 
       console.log("Sign In successful", response.data);
       window.location.href = "/";
     } catch (error) {
-      // Handle error
-      console.error("Sign In error:", error);
+      if (error.response) {
+        setError(error.response.data.message || "Invalid email or password");
+      } else if (error.request) {
+        setError("No response from server. Please try again later.");
+      } else {
+        setError("An unexpected error occurred. Please try again.");
+      }
     }
   };
 
@@ -41,6 +47,11 @@ const Signup = () => {
             <h2 className="text-center text-3xl font-extrabold text-white pb-8">
               Sign In to continue
             </h2>
+            {error && (
+              <div className="bg-red-500 text-white p-3 rounded-md mb-4">
+                {error}
+              </div>
+            )}
             <form onSubmit={handleSignIn} className="mt-8 space-y-6">
               <div className="rounded-md shadow-sm">
                 <div>

@@ -26,7 +26,7 @@ const YourMeals = ({ meals }) => {
         }}
         className="m-4 w-64"
       >
-        <div className="collapse bg-base-200 p-6 flex flex-col items-start content-start hover:shadow-2xl">
+        <div className="collapse bg-base-200 p-6 flex flex-col items-start content-start transition-shadow hover:shadow-2xl duration-200">
           <div className=" text-4xl cursor-pointer mb-4 p-1">{meal.name}</div>
           <div className="flex flex-col items-start">
             <p className="px-0.5">

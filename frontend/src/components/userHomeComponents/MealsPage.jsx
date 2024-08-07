@@ -6,6 +6,7 @@ const MealsPage = ({ userData }) => {
   const [mealName, setMealName] = useState("");
   const [mealData, setMealData] = useState(null);
   const [mealImage, setMealImage] = useState(null);
+  const [currentFood, setCurrentFood] = useState("");
   const [quantity, setQuantity] = useState(100); // Default quantity in grams
   const [components, setComponents] = useState([]); // List of food components
 
@@ -29,9 +30,9 @@ const MealsPage = ({ userData }) => {
         `https://api.unsplash.com/search/photos/?client_id=aH_NfScFgR3t0nRZBQMEkAKituOklmoPbw6JwW2MXV0&query=${query}`
       );
       setMealData(response.data);
+      setCurrentFood(search);
       const firstImage = imageResponse.data.results[0];
       setMealImage(firstImage ? firstImage.urls.small : null);
-      setMealName(""); // Set initial meal name to the search query
     } catch (error) {
       console.error("Error fetching meal data:", error);
       alert("Failed to fetch meal data. Please try again.");
@@ -66,7 +67,6 @@ const MealsPage = ({ userData }) => {
     };
     setComponents([...components, newComponent]);
 
-    // Reset the search field
     setSearch("");
     setMealData(null);
     setMealImage(null);
@@ -184,7 +184,7 @@ const MealsPage = ({ userData }) => {
               alt={search}
               className="w-full h-48 object-cover rounded-lg"
             />
-            <h3 className="text-xl font-semibold">{search}</h3>
+            <h3 className="text-xl font-semibold">{currentFood}</h3>
             <div className="grid grid-cols-2 gap-2 text-sm">
               <p>Quantities shown for 100g</p> <br />
               <p>
