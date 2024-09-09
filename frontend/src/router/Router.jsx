@@ -3,6 +3,7 @@ import Main from "../layout/Main";
 import Home from "../pages/home/Home";
 import Signup from "../pages/signup/Signup";
 import Onboard from "../pages/signup/Onboard";
+import AboutUs from "../pages/aboutus/AboutUs";
 
 const router = createBrowserRouter([
   {
@@ -20,6 +21,14 @@ const router = createBrowserRouter([
       {
         path: "/userOnboard",
         element: <Onboard />,
+      },
+      {
+        path: "*",
+        element: <h1>Page not found</h1>,
+      },
+      {
+        path: "/aboutus",
+        element: <AboutUs />,
       },
     ],
   },

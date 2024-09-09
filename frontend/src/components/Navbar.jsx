@@ -50,7 +50,7 @@ const Navbar = ({ userData }) => {
         <div className="navbar-center hidden lg:flex">
           <ul className="menu menu-horizontal px-1">
             <li>
-              <a>About Us</a>
+              <a href="/aboutus">About Us</a>
             </li>
           </ul>
         </div>
@@ -127,7 +127,7 @@ const Navbar = ({ userData }) => {
         <div className="navbar-center hidden lg:flex">
           <ul className="menu menu-horizontal px-1">
             <li>
-              <a>About Us</a>
+              <a href="/aboutus">About Us</a>
             </li>
             <li>
               <details>

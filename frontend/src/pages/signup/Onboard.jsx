@@ -22,6 +22,7 @@ const Onboard = () => {
     dietaryRestrictions: [],
     foodAllergies: [],
   });
+  const [errorMessage, setErrorMessage] = useState("");
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -43,14 +44,27 @@ const Onboard = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setErrorMessage("");
     try {
+      console.log("inside register request sending");
       const response = await axios.post(
         "http://localhost:4000/api/user/register",
         formData
       );
       console.log("User registered successfully:", response.data);
       window.location.href = "/signup";
-    } catch (error) {}
+    } catch (error) {
+      console.log(error);
+      if (error.response) {
+        setErrorMessage(
+          error.response.data.message || `An error occured during registration`
+        );
+      } else if (error.request) {
+        setErrorMessage("No response from server. Please try again later.");
+      } else {
+        setErrorMessage("An unexpected error occurred. Please try again.");
+      }
+    }
   };
 
   const inputStyle =
@@ -58,8 +72,17 @@ const Onboard = () => {
 
   return (
     <div className="p-20">
+      {errorMessage && (
+        <div
+          className="error-message"
+          style={{ color: "red", marginTop: "10px" }}
+        >
+          {errorMessage}
+        </div>
+      )}
       <div className="mx-auto max-w-[800px] bg-white rounded-md shadow-lg drop-shadow-md p-10">
         <h2 className="text-3xl font-bold mb-8 ">Sign Up</h2>
+
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <input

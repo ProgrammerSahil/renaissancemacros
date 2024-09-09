@@ -9,6 +9,7 @@ const MealsPage = ({ userData }) => {
   const [currentFood, setCurrentFood] = useState("");
   const [quantity, setQuantity] = useState(100); // Default quantity in grams
   const [components, setComponents] = useState([]); // List of food components
+  const [errorMessage, setErrorMessage] = useState("");
 
   const handleSearchChange = (e) => {
     setSearch(e.target.value);
@@ -20,6 +21,7 @@ const MealsPage = ({ userData }) => {
 
   const fetchMealData = async (query) => {
     try {
+      setErrorMessage("");
       const response = await axios.get(
         `http://localhost:4000/api/meal/getMacros`,
         {
@@ -35,7 +37,7 @@ const MealsPage = ({ userData }) => {
       setMealImage(firstImage ? firstImage.urls.small : null);
     } catch (error) {
       console.error("Error fetching meal data:", error);
-      alert("Failed to fetch meal data. Please try again.");
+      setErrorMessage("Error Fetching meal data");
     }
   };
 
@@ -98,6 +100,7 @@ const MealsPage = ({ userData }) => {
     const token = localStorage.getItem("token"); // Adjust based on where you store the token
 
     try {
+      setErrorMessage("");
       const response = await axios.post(
         "http://localhost:4000/api/meal/addMeal",
         {
@@ -121,19 +124,25 @@ const MealsPage = ({ userData }) => {
         }
       );
 
-      alert("Meal added successfully!");
-
       // Reset form
       setMealName("");
       setComponents([]);
     } catch (error) {
       console.error("Error adding meal:", error);
-      alert("Failed to add meal. Please try again.");
+      setErrorMessage("The Meal couldnt be added");
     }
   };
 
   return (
     <div className="container mx-auto p-4">
+      {errorMessage && (
+        <div
+          className="error-message"
+          style={{ color: "red", marginTop: "10px" }}
+        >
+          {errorMessage}
+        </div>
+      )}
       <h2 className="text-4xl font-bold mb-8 text-center">Create Meal</h2>
 
       <div className="w-full max-w-md mx-auto bg-base-200 shadow-md rounded-lg overflow-hidden">

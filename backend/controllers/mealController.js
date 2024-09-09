@@ -3,15 +3,17 @@ import fs from "fs";
 import mealModel from "../models/mealModel.js";
 import dotenv from "dotenv";
 import axios from "axios";
-import { createClient } from "pexels";
+import { GoogleGenerativeAI } from "@google/generative-ai";
+
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+
+const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
 dotenv.config();
 
 const PEXELS_KEY = process.env.PEXELS_API_KEY;
 const spoonacularKEY = process.env.spoonacularKEY;
 const spoonacularURL = "https://api.spoonacular.com/recipes/guessNutrition";
-
-const client = createClient(`${PEXELS_KEY}`);
 
 const getMacros = async (req, res) => {
   try {
@@ -148,4 +150,24 @@ const getMeals = async (req, res) => {
   }
 };
 
-export { getMacros, addMeal, getMeals };
+const getGeminiRecommendation = async (req, res) => {
+  try {
+    //extract data to get recommendation on
+    const { data } = req.body;
+    const instruction =
+      "Act like an expert nutritionist and make smart recommendations, but dont add anything else other than those, here is the person's data: ";
+
+    const prompt = instruction + data;
+    const result = await model.generateContent(prompt);
+    const response = await result.response.text();
+    res.status(200).json({
+      message: "Gemini recommendation recieved",
+      data: response,
+    });
+  } catch (error) {
+    console.error("Error extracting data for gemini recommendations:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+export { getMacros, addMeal, getMeals, getGeminiRecommendation };
