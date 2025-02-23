@@ -3,12 +3,14 @@ import axios from "axios";
 import Banner from "../../components/Banner";
 import UserHome from "../../components/UserHome";
 import Navbar from "../../components/Navbar";
+import { use } from "react";
 
 const Home = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userData, setUserData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [meals, setMeals] = useState(null);
+  const [recommendation, setRecommendation] = useState(null);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -40,6 +42,11 @@ const Home = () => {
           if (mealResponse) {
             setMeals(mealResponse.data.meals);
           }
+
+          const foundRecommendation = await axios.get("localhost:4000/api/meal/getGeminiRecommendation", {
+            headers: { Authorization: `Bearer ${token}` },
+            body: {userData}
+          })
         } catch (error) {
           console.error("Error fetching user data:", error.response || error);
           if (error.response && error.response.status === 401) {
@@ -68,7 +75,7 @@ const Home = () => {
     return (
       <>
         <Navbar userData={userData} />
-        <UserHome userData={userData} mealData={meals} />
+        <UserHome userData={userData} mealData={meals} recommendation={recommendation} />
       </>
     );
   } else {

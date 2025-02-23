@@ -1,7 +1,7 @@
 import React from "react";
 import YourMeals from "../YourMeals";
 
-const BasicInfo = ({ userData, meals }) => {
+const BasicInfo = ({ userData, meals, recommendation }) => {
   function formatDate(dateString) {
     const date = new Date(dateString);
     const options = {

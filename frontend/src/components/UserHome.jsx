@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import BasicInfo from "./userHomeComponents/BasicInfo";
 import MealsPage from "./userHomeComponents/MealsPage";
 
-const UserHome = ({ userData, mealData }) => {
+const UserHome = ({ userData, mealData, recommendation }) => {
   const [menuPage, setMenuPage] = useState("basicInfo");
   const [content, setContent] = useState(null);
 
@@ -39,7 +39,7 @@ const UserHome = ({ userData, mealData }) => {
   const renderContent = () => {
     switch (menuPage) {
       case "basicInfo":
-        return <BasicInfo userData={userData} meals={mealData} />;
+        return <BasicInfo userData={userData} meals={mealData} recommendation={recommendation} />;
       case "meals":
         return <MealsPage userData={userData} />;
       default:
