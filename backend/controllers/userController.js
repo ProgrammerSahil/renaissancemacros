@@ -145,7 +145,6 @@ const authenticateUser = async (req, res) => {
   }
 };
 const findUserProfile = async (req, res) => {
-  console.log("Profile endpoint reached");
   try {
     const user = req.user;
     res.status(200).json({

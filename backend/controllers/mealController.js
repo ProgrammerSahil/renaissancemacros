@@ -72,7 +72,6 @@ const addMeal = async (req, res) => {
       }
     }
 
-    console.log("Adding meal for the user " + email);
     const user = await userModel.findOne({ email });
     if (!user) {
       return res.status(404).json({ message: "User not found" });
@@ -103,7 +102,6 @@ const addMeal = async (req, res) => {
 
     // Add the new meal to the meals array
     mealDoc.meals.push(newMeal);
-    console.log(mealDoc);
 
     // Save the updated meal document
     await mealDoc.save();
@@ -126,7 +124,6 @@ const getMeals = async (req, res) => {
   try {
     // Extract email from request
     const { email } = req.query;
-    console.log("extracting email from request", email);
 
     // Find the meal document associated with the email
     const mealDoc = await mealModel.findOne({ email: email });
