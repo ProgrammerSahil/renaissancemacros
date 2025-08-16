@@ -5,8 +5,8 @@ const YourMeals = ({ meals }) => {
 
   const renderMealComponents = (components) => (
     <div className="p-5">
-      {components.map((component) => (
-        <div key={component.name}>
+      {components.map((component, index) => (
+        <div key={index}>
           <p className="text-5xl">{component.name}</p>
           <p className="pr-3">Carbs: {component.carbs.toFixed(1)} g</p>
           <p className="pr-3">Fats: {component.fats.toFixed(1)} g</p>

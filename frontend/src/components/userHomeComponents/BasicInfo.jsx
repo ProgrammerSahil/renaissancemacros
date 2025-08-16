@@ -16,13 +16,26 @@ const BasicInfo = ({ userData, meals, recommendation }) => {
 
   const showWeightHistory = (weightHistory) => (
     <div>
-      {weightHistory.map((weight) => (
-        <p>
+      {weightHistory.map((weight, index) => (
+        <p key={index}>
           Weighed {weight.weight} Kg on {formatDate(weight.date)}
         </p>
       ))}
     </div>
   );
+
+  const renderRecommendation = () => {
+    if (!recommendation?.data?.data) return null;
+    
+    return (
+      <div className="bg-base-300 p-4 rounded-lg mt-6">
+        <h2 className="text-4xl mb-4">Nutrition Recommendations</h2>
+        {recommendation.data.data.split('\n').map((line, index) => (
+          <p key={index} className="mb-2 text-lg">{line}</p>
+        ))}
+      </div>
+    );
+  };
   const renderAdditionalInfoModal = (userData) => {
     return (
       <>
@@ -122,6 +135,7 @@ const BasicInfo = ({ userData, meals, recommendation }) => {
         </div>
       </dialog>
       <YourMeals meals={meals} />
+      {renderRecommendation()}
     </>
   );
 };

@@ -6,6 +6,8 @@ const UserHome = ({ userData, mealData, recommendation }) => {
   const [menuPage, setMenuPage] = useState("basicInfo");
   const [content, setContent] = useState(null);
 
+  console.log(recommendation);
+
   const renderMenu = () => {
     return (
       <div className="drawer-side">

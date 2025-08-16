@@ -3,7 +3,6 @@ import axios from "axios";
 import Banner from "../../components/Banner";
 import UserHome from "../../components/UserHome";
 import Navbar from "../../components/Navbar";
-import { use } from "react";
 
 const Home = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -18,7 +17,6 @@ const Home = () => {
 
       if (token) {
         try {
-          console.log("Fetching user data...");
           const response = await axios.get(
             "http://localhost:4000/api/user/profile",
             {
@@ -30,7 +28,7 @@ const Home = () => {
 
           let email = response.data.userData.email;
 
-          console.log("Fetching user meals...");
+          ("Fetching user meals...");
           const mealResponse = await axios.get(
             "http://localhost:4000/api/meal/getMeals",
             {
@@ -43,10 +41,12 @@ const Home = () => {
             setMeals(mealResponse.data.meals);
           }
 
-          const foundRecommendation = await axios.get("localhost:4000/api/meal/getGeminiRecommendation", {
+          const foundRecommendation = await axios.get("http://localhost:4000/api/meal/getGeminiRecommendation", {
             headers: { Authorization: `Bearer ${token}` },
             body: {userData}
           })
+
+          setRecommendation(foundRecommendation);
         } catch (error) {
           console.error("Error fetching user data:", error.response || error);
           if (error.response && error.response.status === 401) {

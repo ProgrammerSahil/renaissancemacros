@@ -46,7 +46,6 @@ const Onboard = () => {
     e.preventDefault();
     setErrorMessage("");
     try {
-      console.log("inside register request sending");
       const response = await axios.post(
         "http://localhost:4000/api/user/register",
         formData
